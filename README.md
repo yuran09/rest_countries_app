@@ -1,6 +1,6 @@
 # rest_countries_app
 
-Mobile app that shows a list of countries and some properties
+Flutter Mobile app that shows a list of countries and some properties
 
 ## Getting Started
 
