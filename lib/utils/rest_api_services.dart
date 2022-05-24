@@ -10,11 +10,12 @@ class RestApiServices{
   Future _sendGetRequest(String url) async{
     try{
       var response = await dio.get(url);
+      print(url);
       print(response.statusCode);
       // print(response.data[0]['capital']);
       if (response.statusCode! >= 200 || response.statusCode! <= 299) {
         // Success
-        return response.data[0];
+        return response.data;
       }
       else {
         throw Exception();
@@ -24,15 +25,15 @@ class RestApiServices{
     }
   }
 
-  Future<Map<String, dynamic>> byName(String data) async {
+  Future byName(String data) async {
     return await _sendGetRequest('$apiUrl'+'$nameUrl' + '/$data');
   }
 
-  Future<Map<String, dynamic>> bySubRegion(String data) async {
+  Future bySubRegion(String data) async {
     return await _sendGetRequest('$apiUrl'+'$nameUrl' + '/$data');
   }
 
-  Future<Map<String, dynamic>> byAll() async {
-    return await _sendGetRequest('$apiUrl'+'/all?fields=name');
+  Future byAll() async {
+    return await _sendGetRequest(v2AllUrl);
   }
 }

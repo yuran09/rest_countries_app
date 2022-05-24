@@ -9,21 +9,28 @@ class Country {
   final String timezone;
   final String nativeName;
 
-  factory Country.fromJson(Map<String, dynamic> json){
+  const Country(
+      {required this.name,
+      required this.flagUrl,
+      required this.capital,
+      required this.region,
+      required this.subRegion,
+      required this.population,
+      required this.area,
+      required this.timezone,
+      required this.nativeName});
+
+  factory Country.fromJson(Map<String, dynamic> json) {
     return Country(
         name: json['name'],
-        flagUrl: json['flags']['png'],
-        capital: json[''],
-        region: json[''],
-        subRegion: json[''],
-        population: json[''],
-        area: json[''],
-        timezone: json[''],
-        nativeName: json['']
+        flagUrl: json['flags']?? '',
+        capital: json['']?? '',
+        region: json['']?? '',
+        subRegion: json['']?? '',
+        population: json['']?? '',
+        area: json['']?? '',
+        timezone: json['']?? '',
+        nativeName: json['']?? ''
     );
   }
-
-  Country(this.name, this.flagUrl, this.capital, this.region, this.subRegion,
-      this.population, this.area, this.timezone, this.nativeName);
-
 }
