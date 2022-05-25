@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 
 import 'providers/countryProvider.dart';
@@ -53,9 +54,32 @@ class _MyHomePageState extends State<MyHomePage> {
           itemBuilder: (BuildContext context, int index) {
             //return CategoryItem(name: 'TestName', categoryPic: Image.asset('images/3d_icon.png'));
             return ListTile(
-              leading: Icon(Icons.add),
+              leading: Container(
+                color: Colors.green,
+                height: 30,
+                width: 30,
+            child: SvgPicture.network(
+              countryP.countries[index].flagUrl
+            ),
+            //     child: CachedNetworkImage(
+            //       imageUrl: countryP.countries[index].flagUrl,
+            //       progressIndicatorBuilder:
+            //           (context, url, downloadProgress) => Center(
+            //         child: CircularProgressIndicator(
+            //             value: downloadProgress.progress),
+            //       ),
+            //       errorWidget: (context, url, error) => Container(
+            //     color: Colors.black12,
+            //
+            //     child: const Icon(
+            //       Icons.error,
+            //       color: Colors.red,
+            //     ),
+            // ),
+            //     ),
+              ),
               title: Text(countryP.countries[index].name),
-              subtitle: Text(''),
+              subtitle: Text('jvshdvvdf'),
             );
           },
         );

@@ -36,4 +36,7 @@ class RestApiServices{
   Future byAll() async {
     return await _sendGetRequest(v2AllUrl);
   }
+  Future byAll2() async {
+    return await _sendGetRequest(getAllUrl);
+  }
 }

@@ -23,7 +23,7 @@ class Country {
   factory Country.fromJson(Map<String, dynamic> json) {
     return Country(
         name: json['name'],
-        flagUrl: json['flags']?? '',
+        flagUrl: json['flag']?? 'n/a',
         capital: json['']?? '',
         region: json['']?? '',
         subRegion: json['']?? '',
