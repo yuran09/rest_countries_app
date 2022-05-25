@@ -37,50 +37,93 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   var countryList;
+  TextEditingController txtController = TextEditingController();
+
+  @override
+  void dispose() {
+    super.dispose();
+    txtController.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.white,
-        title: Text(widget.title),
-      ),
-      body: Consumer<CountryProvider>(builder: (context, countryP, child) {
-        return ListView.builder(
-          //padding: EdgeInsets.zero,
-          scrollDirection: Axis.vertical,
-          itemCount: countryP.countries.length,
-          itemBuilder: (BuildContext context, int index) {
-            //return CategoryItem(name: 'TestName', categoryPic: Image.asset('images/3d_icon.png'));
-            return ListTile(
-              onTap: (){},
-              trailing: Icon(Icons.arrow_forward_ios_rounded),
-              leading: Container(
-                height: 40,
-                width: 60,
-                child: ClipRRect(
-                  borderRadius: const BorderRadius.all(const Radius.circular(8)),
-                  child: CachedNetworkImage(
-                    imageUrl: countryP.countries[index].flagUrl,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                // child: SvgPicture.network(countryP.countries[index].flagUrl, fit: BoxFit.fitHeight,),
+        appBar: AppBar(
+          elevation: 0,
+          backgroundColor: Colors.white,
+          title: Text(widget.title),
+        ),
+        body: Column(
+          children: [
+            Container(
+              margin: EdgeInsets.all(16),
+              // color: Colors.green,
+              child: TextField(
+                onChanged: searchCountry,
+                controller: txtController,
+                decoration: InputDecoration(
+                    prefixIcon: Icon(Icons.search),
+                    hintText: 'Nome País',
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide:
+                            BorderSide(color: Theme.of(context).primaryColor))),
               ),
-              title: Text(countryP.countries[index].name),
-              subtitle: Text(countryP.countries[index].capital),
-            );
-          },
-        );
-      }),
-    );
+              height: MediaQuery.of(context).size.height * 0.07,
+            ),
+            Expanded(
+              child: Consumer<CountryProvider>(
+                  builder: (context, countryP, child) {
+                return ListView.builder(
+                  //padding: EdgeInsets.zero,
+                  scrollDirection: Axis.vertical,
+                  itemCount: countryP.floatingCountries.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    //return CategoryItem(name: 'TestName', categoryPic: Image.asset('images/3d_icon.png'));
+                    return ListTile(
+                      onTap: () {},
+                      trailing: Icon(Icons.arrow_forward_ios_rounded),
+                      leading: Container(
+                        height: 40,
+                        width: 60,
+                        child: ClipRRect(
+                          borderRadius:
+                              const BorderRadius.all(const Radius.circular(8)),
+                          child: CachedNetworkImage(
+                            imageUrl: countryP.floatingCountries[index].flagUrl,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        // child: SvgPicture.network(countryP.countries[index].flagUrl, fit: BoxFit.fitHeight,),
+                      ),
+                      title: Text(countryP.floatingCountries[index].name),
+                      subtitle: Text(countryP.floatingCountries[index].capital),
+                    );
+                  },
+                );
+              }),
+            ),
+          ],
+        ));
   }
 
   @override
   void initState() {
     super.initState();
     // countryList = RestApiServices.instance.byName('moz');
-    context.read<CountryProvider>().fetchAllCountries();
+    context.read<CountryProvider>().fetchAllCountries().then((value) =>
+        context.read<CountryProvider>().initializeFloatingCountries());
+  }
+
+  void searchCountry(String query) {
+    final suggestions =
+        context.read<CountryProvider>().countries.where((country) {
+      final finalCountry = country.name.toLowerCase();
+      final input = query.toLowerCase();
+
+      return finalCountry.contains(input);
+    }).toList();
+
+    context.read<CountryProvider>().updateFloatingCountries(suggestions);
   }
 }

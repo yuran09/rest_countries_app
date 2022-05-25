@@ -5,8 +5,20 @@ import 'package:rest_countries_app/utils/rest_api_services.dart';
 class CountryProvider extends ChangeNotifier {
   late Country _country;
   late List<Country> _countries = [];
+  late List<Country> _floatingCountries = [];
 
   List<Country> get countries => _countries;
+  List<Country> get floatingCountries => _floatingCountries;
+
+  void initializeFloatingCountries(){
+    _floatingCountries = _countries;
+    notifyListeners();
+  }
+
+  void updateFloatingCountries(List<Country> countries){
+    _floatingCountries = countries;
+    notifyListeners();
+  }
 
   Future fetchAllCountries() {
     return RestApiServices.instance.byAll().then((data) {
