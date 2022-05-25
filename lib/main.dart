@@ -1,7 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
+import 'countryPage.dart';
 import 'providers/countryProvider.dart';
 
 void main() {
@@ -53,63 +55,91 @@ class _MyHomePageState extends State<MyHomePage> {
           backgroundColor: Colors.white,
           title: Text(widget.title),
         ),
-        body: Column(
-          children: [
-            Container(
-              margin: EdgeInsets.all(16),
-              // color: Colors.green,
-              child: TextField(
-                onChanged: searchCountry,
-                controller: txtController,
-                decoration: InputDecoration(
-                    prefixIcon: Icon(Icons.search),
-                    hintText: 'Nome País',
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        borderSide:
-                            BorderSide(color: Theme.of(context).primaryColor))),
-              ),
-              height: MediaQuery.of(context).size.height * 0.07,
-            ),
-            Expanded(
-              child: Consumer<CountryProvider>(
-                  builder: (context, countryP, child) {
-                return ListView.builder(
-                  //padding: EdgeInsets.zero,
-                  scrollDirection: Axis.vertical,
-                  itemCount: countryP.floatingCountries.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    //return CategoryItem(name: 'TestName', categoryPic: Image.asset('images/3d_icon.png'));
-                    return ListTile(
-                      onTap: () {},
-                      trailing: Icon(Icons.arrow_forward_ios_rounded),
-                      leading: Container(
-                        height: 40,
-                        width: 60,
-                        child: ClipRRect(
-                          borderRadius:
-                              const BorderRadius.all(const Radius.circular(8)),
-                          child: CachedNetworkImage(
-                            imageUrl: countryP.floatingCountries[index].flagUrl,
-                            fit: BoxFit.cover,
-                          ),
+        body: Builder(
+          builder: (context){
+            return GestureDetector(
+              onTap: (){FocusScope.of(context).unfocus();},
+              child: Column(
+                children: [
+                  Container(
+                    margin: EdgeInsets.all(16),
+                    height: MediaQuery.of(context).size.height * 0.07,
+                    // color: Colors.green,
+                    child: Card(
+                      elevation: 15,
+                      color: Colors.grey[100],
+                      shadowColor: Theme.of(context).primaryColor.withOpacity(0.2),
+                      child: TextField(
+                        controller: txtController,
+                        onChanged: searchCountry,
+                        decoration: InputDecoration(
+                          label: const Text('Adicione um comentário'),
+                          floatingLabelBehavior:
+                          FloatingLabelBehavior.never,
+                          enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide:
+                              const BorderSide(color: Colors.black)),
+                          focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(
+                                  color: Theme.of(context).colorScheme.primary)),
                         ),
-                        // child: SvgPicture.network(countryP.countries[index].flagUrl, fit: BoxFit.fitHeight,),
                       ),
-                      title: Text(countryP.floatingCountries[index].name),
-                      subtitle: Text(countryP.floatingCountries[index].capital),
-                    );
-                  },
-                );
-              }),
-            ),
-          ],
-        ));
+                    ),
+
+                  ),
+                  Expanded(
+                    child: Consumer<CountryProvider>(
+                        builder: (context, countryP, child) {
+                          return ListView.builder(
+                            //padding: EdgeInsets.zero,
+                            scrollDirection: Axis.vertical,
+                            itemCount: countryP.floatingCountries.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              //return CategoryItem(name: 'TestName', categoryPic: Image.asset('images/3d_icon.png'));
+                              return ListTile(
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => CountryPage(
+                                              country:
+                                              countryP.floatingCountries[index])));
+                                },
+                                trailing: Icon(Icons.arrow_forward_ios_rounded),
+                                leading: Container(
+                                  height: 40,
+                                  width: 60,
+                                  child: ClipRRect(
+                                    borderRadius:
+                                    const BorderRadius.all(const Radius.circular(8)),
+                                    child: CachedNetworkImage(
+                                      imageUrl: countryP.floatingCountries[index].flagUrl,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                  // child: SvgPicture.network(countryP.countries[index].flagUrl, fit: BoxFit.fitHeight,),
+                                ),
+                                title: Text(countryP.floatingCountries[index].name),
+                                subtitle: Text(countryP.floatingCountries[index].capital),
+                              );
+                            },
+                          );
+                        }),
+                  ),
+                ],
+              ),
+            );
+          },
+        )
+    );
   }
 
   @override
   void initState() {
     super.initState();
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
     // countryList = RestApiServices.instance.byName('moz');
     context.read<CountryProvider>().fetchAllCountries().then((value) =>
         context.read<CountryProvider>().initializeFloatingCountries());
