@@ -12,8 +12,8 @@ class CountryProvider extends ChangeNotifier {
     return RestApiServices.instance.byAll().then((data) {
       data.forEach((object) {
         Country c = Country.fromJson(object);
-        print(object);
-        print(c.name);
+        // print(object);
+        print(c.flagUrl);
         // print(c.flagUrl);
         _countries.add(c);
         // object.forEach((key, value) {

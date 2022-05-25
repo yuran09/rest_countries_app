@@ -1,5 +1,5 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 
 import 'providers/countryProvider.dart';
@@ -54,32 +54,22 @@ class _MyHomePageState extends State<MyHomePage> {
           itemBuilder: (BuildContext context, int index) {
             //return CategoryItem(name: 'TestName', categoryPic: Image.asset('images/3d_icon.png'));
             return ListTile(
+              onTap: (){},
+              trailing: Icon(Icons.arrow_forward_ios_rounded),
               leading: Container(
-                color: Colors.green,
-                height: 30,
-                width: 30,
-            child: SvgPicture.network(
-              countryP.countries[index].flagUrl
-            ),
-            //     child: CachedNetworkImage(
-            //       imageUrl: countryP.countries[index].flagUrl,
-            //       progressIndicatorBuilder:
-            //           (context, url, downloadProgress) => Center(
-            //         child: CircularProgressIndicator(
-            //             value: downloadProgress.progress),
-            //       ),
-            //       errorWidget: (context, url, error) => Container(
-            //     color: Colors.black12,
-            //
-            //     child: const Icon(
-            //       Icons.error,
-            //       color: Colors.red,
-            //     ),
-            // ),
-            //     ),
+                height: 40,
+                width: 60,
+                child: ClipRRect(
+                  borderRadius: const BorderRadius.all(const Radius.circular(8)),
+                  child: CachedNetworkImage(
+                    imageUrl: countryP.countries[index].flagUrl,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                // child: SvgPicture.network(countryP.countries[index].flagUrl, fit: BoxFit.fitHeight,),
               ),
               title: Text(countryP.countries[index].name),
-              subtitle: Text('jvshdvvdf'),
+              subtitle: Text(countryP.countries[index].capital),
             );
           },
         );
