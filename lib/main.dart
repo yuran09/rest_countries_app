@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         title: 'RestCountries',
-        theme: ThemeData(primarySwatch: Colors.cyan, canvasColor: Colors.white),
+        theme: ThemeData(primarySwatch: Colors.cyan, canvasColor: Colors.grey[200]),
         home: const MyHomePage(title: 'Países'),
       ),
     );
@@ -54,7 +54,8 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
         appBar: AppBar(
           elevation: 0,
-          backgroundColor: Colors.white,
+          backgroundColor: Colors.transparent,
+          foregroundColor: Colors.black,
           title: Text(widget.title),
         ),
         body: Builder(
@@ -80,13 +81,14 @@ class _MyHomePageState extends State<MyHomePage> {
                           controller: txtController,
                           onChanged: searchCountry,
                           decoration: InputDecoration(
-                            label: const Text('Adicione um comentário'),
+                            label: const Text('Nome do país'),
                             floatingLabelBehavior:
                             FloatingLabelBehavior.never,
+                            filled: true,
                             enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8),
-                                borderSide:
-                                const BorderSide(color: Colors.black)),
+                              borderSide: BorderSide(
+                                  color: Color(0xffeaeaea)),),
                             focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8),
                                 borderSide: BorderSide(
