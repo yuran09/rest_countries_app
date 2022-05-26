@@ -102,7 +102,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       child: Consumer<CountryProvider>(
                           builder: (context, countryP, child) {
                             return ListView.builder(
-                              //padding: EdgeInsets.zero,
+                              addAutomaticKeepAlives: false,
                               scrollDirection: Axis.vertical,
                               itemCount: countryP.floatingCountries.length,
                               itemBuilder: (BuildContext context, int index) {

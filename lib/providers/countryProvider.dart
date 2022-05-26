@@ -25,7 +25,7 @@ class CountryProvider extends ChangeNotifier {
       data.forEach((object) {
         Country c = Country.fromJson(object);
         // print(object);
-        print(c.flagUrl);
+        // print(c.flagUrl);
         // print(c.flagUrl);
         _countries.add(c);
         // object.forEach((key, value) {
