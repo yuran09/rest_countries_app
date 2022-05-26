@@ -27,10 +27,11 @@ class Country {
         capital: json['capital']?? 'n/a',
         region: json['region']?? 'n/a',
         subRegion: json['subregion']?? 'n/a',
-        population: json['population']?? 'n/a',
-        area: json['area']?? 'n/a',
-        timezone: json['timezones']?? 'n/a',
+        population: json['population'].toString(),
+        area: json['area'].toString(),
+        timezone: json['timezones'][0]?? 'n/a',
         nativeName: json['nativeName']?? 'n/a'
     );
   }
+
 }

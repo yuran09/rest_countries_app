@@ -26,11 +26,7 @@ class RestApiServices{
   }
 
   Future byName(String data) async {
-    return await _sendGetRequest('$apiUrl'+'$nameUrl' + '/$data');
-  }
-
-  Future bySubRegion(String data) async {
-    return await _sendGetRequest('$apiUrl'+'$nameUrl' + '/$data');
+    return await _sendGetRequest('$v2ByNameUrl' + '/$data');
   }
 
   Future byAll() async {
