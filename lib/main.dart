@@ -57,6 +57,12 @@ class _MyHomePageState extends State<MyHomePage> {
           backgroundColor: Colors.transparent,
           foregroundColor: Colors.black,
           title: Text(widget.title),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.download_rounded),
+              onPressed: () {},
+            )
+          ],
         ),
         body: Builder(
           builder: (context){
