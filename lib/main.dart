@@ -1,8 +1,13 @@
+import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:open_file/open_file.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:rest_countries_app/constants/models/Country.dart';
+import 'package:rest_countries_app/utils/readWriteData.dart';
 import 'package:xml/xml.dart';
 import 'countryPage.dart';
 import 'providers/countryProvider.dart';
@@ -44,6 +49,7 @@ class _MyHomePageState extends State<MyHomePage> {
   var countryList;
   TextEditingController txtController = TextEditingController();
   bool isLoading = false;
+  final ReadWriteData rwd = ReadWriteData();
 
   @override
   void dispose() {
@@ -86,7 +92,11 @@ class _MyHomePageState extends State<MyHomePage> {
                     });
 
                   final document = builder.buildDocument();
-                  print(document.toXmlString());
+                  rwd.writeXML(document.toXmlString());
+                  rwd.getFilePath().then((value) => OpenFile.open(value));
+
+
+                  // print(document.toXmlString());
                 });
               }
             )
@@ -206,27 +216,4 @@ class _MyHomePageState extends State<MyHomePage> {
     context.read<CountryProvider>().updateFloatingCountries(suggestions);
   }
 
-  void makeXML(){
-    final builder = XmlBuilder();
-    builder.processing('xml', 'version="1.0"');
-    builder.element('bookshelf', nest: () {
-      builder.element('book', nest: () {
-        builder.element('title', nest: () {
-          builder.text('Growing a Language');
-        });
-        builder.element('price', nest: 29.99);
-      });
-      builder.element('book', nest: () {
-        builder.element('title', nest: () {
-          builder.attribute('lang', 'en');
-          builder.text('Learning XML');
-        });
-        builder.element('price', nest: 39.95);
-      });
-      builder.element('price', nest: '132.00');
-    });
-    final document = builder.buildDocument();
-
-    print(document);
-  }
 }
