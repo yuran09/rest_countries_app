@@ -8,10 +8,12 @@ class CountryProvider extends ChangeNotifier {
   late Country _country;
   late List<Country> _countries = [];
   late List<Country> _floatingCountries = [];
+  late List<Country> _countriesToExport = [];
 
   Country get country => _country;
   List<Country> get countries => _countries;
   List<Country> get floatingCountries => _floatingCountries;
+  List<Country> get countriesToExport => _countriesToExport;
 
   void initializeFloatingCountries(){
     _floatingCountries = _countries;
@@ -21,6 +23,15 @@ class CountryProvider extends ChangeNotifier {
   void updateFloatingCountries(List<Country> countries){
     _floatingCountries = countries;
     notifyListeners();
+  }
+
+  Future fetchToExport(){
+    return RestApiServices.instance.byRequiredAttr().then((data) {
+      data.forEach((object) {
+        _countriesToExport.add(Country.fromJson(object));
+      });
+      notifyListeners();
+    });
   }
 
   Future fetchAllCountries() {

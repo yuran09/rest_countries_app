@@ -2,7 +2,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-
+import 'package:rest_countries_app/constants/models/Country.dart';
+import 'package:xml/xml.dart';
 import 'countryPage.dart';
 import 'providers/countryProvider.dart';
 
@@ -21,6 +22,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => CountryProvider()),
       ],
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         title: 'RestCountries',
         theme: ThemeData(primarySwatch: Colors.cyan, canvasColor: Colors.grey[200]),
         home: const MyHomePage(title: 'Países'),
@@ -60,7 +62,33 @@ class _MyHomePageState extends State<MyHomePage> {
           actions: [
             IconButton(
               icon: const Icon(Icons.download_rounded),
-              onPressed: () {},
+              onPressed: () {
+                // makeXML();
+                context.read<CountryProvider>().fetchToExport().then((value) {
+
+                  List<dynamic> country = context.read<CountryProvider>().countriesToExport;
+
+                  final builder = XmlBuilder();
+                  builder.processing('xml', 'version="1.0"');
+
+                    builder.element('País', nest: () {
+                      for (var element in country) {
+                        builder.element('Nome', nest: element.name);
+                        builder.element('Capital', nest: element.capital);
+                        builder.element('Sub_região', nest: element.subRegion);
+                        builder.element('Região', nest: element.region);
+                        builder.element('População', nest: element.population);
+                        builder.element('Área', nest: element.area);
+                        builder.element('Fuso_horário', nest: element.timezone);
+                        builder.element('nome_nativo', nest: element.nativeName);
+                        builder.element('bandeira', nest: element.flagUrl);
+                      }
+                    });
+
+                  final document = builder.buildDocument();
+                  print(document.toXmlString());
+                });
+              }
             )
           ],
         ),
@@ -176,5 +204,29 @@ class _MyHomePageState extends State<MyHomePage> {
     }).toList();
 
     context.read<CountryProvider>().updateFloatingCountries(suggestions);
+  }
+
+  void makeXML(){
+    final builder = XmlBuilder();
+    builder.processing('xml', 'version="1.0"');
+    builder.element('bookshelf', nest: () {
+      builder.element('book', nest: () {
+        builder.element('title', nest: () {
+          builder.text('Growing a Language');
+        });
+        builder.element('price', nest: 29.99);
+      });
+      builder.element('book', nest: () {
+        builder.element('title', nest: () {
+          builder.attribute('lang', 'en');
+          builder.text('Learning XML');
+        });
+        builder.element('price', nest: 39.95);
+      });
+      builder.element('price', nest: '132.00');
+    });
+    final document = builder.buildDocument();
+
+    print(document);
   }
 }

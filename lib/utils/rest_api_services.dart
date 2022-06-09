@@ -35,4 +35,7 @@ class RestApiServices{
   Future byAll2() async {
     return await _sendGetRequest(getAllUrl);
   }
+  Future byRequiredAttr() async{
+    return await _sendGetRequest(v2AllRequiredAttrUrl);
+  }
 }
