@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:path_provider/path_provider.dart';
@@ -15,7 +16,7 @@ class ReadWriteData{
   Future<File> writeXML(String xmlString) async {
     final file = await _localFile;
     // Write the file
-    return file.writeAsString(xmlString);
+    return file.writeAsString(xmlString, encoding: utf8);
   }
   Future<File?> readXML() async {
     try {
