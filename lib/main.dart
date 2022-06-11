@@ -76,20 +76,22 @@ class _MyHomePageState extends State<MyHomePage> {
                         context.read<CountryProvider>().countriesToExport;
 
                     final builder = XmlBuilder();
-                    builder.processing('xml', 'version="1.0" encoding="UTF-8"');
+                    builder.processing('xml', 'version="1.0"');
 
-                    builder.element('País', nest: () {
+                    builder.element('Paises', nest: () {
                       for (var element in country) {
-                        builder.element('Nome', nest: element.name);
-                        builder.element('Capital', nest: element.capital);
-                        builder.element('Sub_região', nest: element.subRegion);
-                        builder.element('Região', nest: element.region);
-                        builder.element('População', nest: element.population);
-                        builder.element('Área', nest: element.area);
-                        builder.element('Fuso_horário', nest: element.timezone);
-                        builder.element('nome_nativo',
-                            nest: element.nativeName);
-                        builder.element('bandeira', nest: element.flagUrl);
+                        builder.element('País', nest: (){
+                          builder.element('Nome', nest: element.name);
+                          builder.element('Capital', nest: element.capital);
+                          builder.element('Sub_região', nest: element.subRegion);
+                          builder.element('Região', nest: element.region);
+                          builder.element('População', nest: element.population);
+                          builder.element('Área', nest: element.area);
+                          builder.element('Fuso_horário', nest: element.timezone);
+                          builder.element('nome_nativo',
+                              nest: element.nativeName);
+                          builder.element('bandeira', nest: element.flagUrl);
+                        });
                       }
                     });
 

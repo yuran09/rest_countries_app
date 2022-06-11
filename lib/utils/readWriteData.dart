@@ -11,7 +11,7 @@ class ReadWriteData{
   }
   Future<File> get _localFile async {
     final path = await _localPath;
-    return File('$path/countries.txt');
+    return File('$path/countries.xml');
   }
   Future<File> writeXML(String xmlString) async {
     final file = await _localFile;
