@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:path/path.dart';
 
+import 'package:excel/excel.dart';
 import 'package:path_provider/path_provider.dart';
 
 class ReadWriteData{
@@ -26,6 +28,15 @@ class ReadWriteData{
     final file = await _localFile;
     // Write the file
     return file.writeAsString(csvString, encoding: utf8);
+  }
+  Future<File> writeXlsx(Excel excel) async {
+    fileExtension = 'xlsx';
+    final file = await _localFile;
+    // Write the file
+
+    List<int> list = excel.encode() as List<int>;
+
+    return file.writeAsBytes(list);
   }
 
   Future<File?> readXML() async {

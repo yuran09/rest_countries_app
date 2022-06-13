@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:excel/excel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:open_file/open_file.dart';
@@ -74,7 +75,9 @@ class _MyHomePageState extends State<MyHomePage> {
                 itemBuilder: (context) => [
                       PopupMenuItem(
                         child: Text('Exportar XLS'),
-                        onTap: () {},
+                        onTap: () {
+                          xlsConverter();
+                        },
                       ),
                       PopupMenuItem(
                         child: Text('Exportar CSV'),
@@ -271,6 +274,52 @@ class _MyHomePageState extends State<MyHomePage> {
             content: Text(value.message),
           ));
         });
+      });
+    });
+  }
+
+  void xlsConverter() async {
+    var excel =
+        Excel.createExcel(); // automatically creates 1 empty sheet: Sheet1
+    var defaultSheet = await excel.getDefaultSheet();
+    Sheet sheetObject = excel[defaultSheet.toString()];
+
+    sheetObject.cell(CellIndex.indexByString("A1")).value = 'Nome';
+    sheetObject.cell(CellIndex.indexByString("B1")).value = 'Capital';
+    sheetObject.cell(CellIndex.indexByString("C1")).value = 'Região';
+    sheetObject.cell(CellIndex.indexByString("D1")).value = 'SubRegião';
+    sheetObject.cell(CellIndex.indexByString("E1")).value = 'População';
+    sheetObject.cell(CellIndex.indexByString("F1")).value = 'Área';
+    sheetObject.cell(CellIndex.indexByString("G1")).value = 'FusoHorário';
+    sheetObject.cell(CellIndex.indexByString("H1")).value = 'NomeNativo';
+    sheetObject.cell(CellIndex.indexByString("I1")).value = 'Bandeira';
+
+    await context.read<CountryProvider>().fetchToExport();
+
+    List<dynamic> countries = context.read<CountryProvider>().countriesToExport;
+    List<String> rows = [];
+
+    countries.forEach((element) {
+      rows.add(element.name);
+      rows.add(element.capital);
+      rows.add(element.region);
+      rows.add(element.subRegion);
+      rows.add(element.population);
+      rows.add(element.area);
+      rows.add(element.timezone);
+      rows.add(element.nativeName);
+      rows.add(element.flagUrl);
+
+      sheetObject.appendRow(rows);
+      rows.clear();
+    });
+
+    rwd.writeXlsx(excel);
+    rwd.getFilePath().then((value) {
+      OpenFile.open(value).then((value) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(value.message),
+        ));
       });
     });
   }
