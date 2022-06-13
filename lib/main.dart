@@ -50,6 +50,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   var countryList;
+  var _openResult = 'Unknown';
   TextEditingController txtController = TextEditingController();
   bool isLoading = false;
   final ReadWriteData rwd = ReadWriteData();
@@ -70,36 +71,25 @@ class _MyHomePageState extends State<MyHomePage> {
           title: Text(widget.title),
           actions: [
             PopupMenuButton(
-              itemBuilder: (context) => [
-                PopupMenuItem(
-                  child: Text('Exportar XLS'),
-                  onTap: (){
-
-                  },
-                ),
-                PopupMenuItem(
-                    child: Text('Exportar CSV'),
-                  onTap: (){
-                    csvConverter();
-                      // print(
-                      //     '''
-                      //     Year,Make,Model,Length
-                      //     1997,Ford,E350,2.35,
-                      //     2000,Mercury,Cougar,2.38
-                      //     '''
-                      // );
-
-                  },
-                ),
-                PopupMenuItem(
-                    child: Text('Exportar XML'),
-                  onTap: (){
-                    xmlConverter();
-                  },
-                ),
-              ]
-            )
-
+                itemBuilder: (context) => [
+                      PopupMenuItem(
+                        child: Text('Exportar XLS'),
+                        onTap: () {},
+                      ),
+                      PopupMenuItem(
+                        child: Text('Exportar CSV'),
+                        onTap: () {
+                          csvConverter();
+                          //TODO: IMPLEMENT OPENRESULT AND DISPLAY MESSAGE IF IT DIDNT OPEN OR SOME ERROR
+                        },
+                      ),
+                      PopupMenuItem(
+                        child: Text('Exportar XML'),
+                        onTap: () {
+                          xmlConverter();
+                        },
+                      ),
+                    ])
           ],
         ),
         body: Builder(
@@ -219,7 +209,7 @@ class _MyHomePageState extends State<MyHomePage> {
     context.read<CountryProvider>().updateFloatingCountries(suggestions);
   }
 
-  void xmlConverter(){
+  void xmlConverter() {
     context.read<CountryProvider>().fetchToExport().then((value) {
       List<dynamic> countries =
           context.read<CountryProvider>().countriesToExport;
@@ -229,7 +219,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
       builder.element('Paises', nest: () {
         for (var element in countries) {
-          builder.element('País', nest: (){
+          builder.element('País', nest: () {
             builder.element('Nome', nest: element.name);
             builder.element('Capital', nest: element.capital);
             builder.element('Sub_região', nest: element.subRegion);
@@ -237,8 +227,7 @@ class _MyHomePageState extends State<MyHomePage> {
             builder.element('População', nest: element.population);
             builder.element('Área', nest: element.area);
             builder.element('Fuso_horário', nest: element.timezone);
-            builder.element('nome_nativo',
-                nest: element.nativeName);
+            builder.element('nome_nativo', nest: element.nativeName);
             builder.element('bandeira', nest: element.flagUrl);
           });
         }
@@ -246,13 +235,19 @@ class _MyHomePageState extends State<MyHomePage> {
 
       final document = builder.buildDocument();
       // print(document.toXmlString());
-      rwd.writeXML(document.toXmlString(pretty: true, ));
-      rwd.getFilePath().then((value) => OpenFile.open(value, type: 'text/plain'));
-
+      rwd.writeXML(document.toXmlString(
+        pretty: true,
+      ));
+      rwd.getFilePath().then(
+          (value) => OpenFile.open(value, type: 'text/plain').then((value) {
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  content: Text(value.message),
+                ));
+              }));
     });
   }
 
-  void csvConverter(){
+  void csvConverter() {
     String csv =
         "Nome,Capital,Região,SubRegião,População,Área,FusoHorário,NomeNativo,Bandeira\n";
 
@@ -260,8 +255,7 @@ class _MyHomePageState extends State<MyHomePage> {
       List<dynamic> countries =
           context.read<CountryProvider>().countriesToExport;
       countries.forEach((element) {
-        csv +=
-            '${element.name},'
+        csv += '${element.name},'
             '${element.capital},'
             '${element.region},'
             '${element.subRegion},'
@@ -269,16 +263,16 @@ class _MyHomePageState extends State<MyHomePage> {
             '${element.area},'
             '${element.timezone},'
             '${element.nativeName},'
-            '${element.flagUrl}\n'
-        ;
+            '${element.flagUrl}\n';
       });
       rwd.writeCSV(csv);
       rwd.getFilePath().then((value) {
-        OpenFile.open(value, type: 'application/vnd.ms-excel');
+        OpenFile.open(value, type: 'application/vnd.ms-excel').then((value) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(value.message),
+          ));
+        });
       });
-
     });
-
-
   }
 }
