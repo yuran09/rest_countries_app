@@ -13,6 +13,8 @@ import 'package:xml/xml.dart';
 import 'countryPage.dart';
 import 'providers/countryProvider.dart';
 
+enum Menu { itemOne, itemTwo, itemThree }
+
 void main() {
   runApp(const MyApp());
 }
@@ -67,46 +69,37 @@ class _MyHomePageState extends State<MyHomePage> {
           foregroundColor: Colors.black,
           title: Text(widget.title),
           actions: [
-            IconButton(
-                icon: const Icon(Icons.download_rounded),
-                onPressed: () {
-                  // makeXML();
-                  context.read<CountryProvider>().fetchToExport().then((value) {
-                    List<dynamic> country =
-                        context.read<CountryProvider>().countriesToExport;
+            PopupMenuButton(
+              itemBuilder: (context) => [
+                PopupMenuItem(
+                  child: Text('Exportar XLS'),
+                  onTap: (){
 
-                    final builder = XmlBuilder();
-                    builder.processing('xml', 'version="1.0"');
+                  },
+                ),
+                PopupMenuItem(
+                    child: Text('Exportar CSV'),
+                  onTap: (){
+                    csvConverter();
+                      // print(
+                      //     '''
+                      //     Year,Make,Model,Length
+                      //     1997,Ford,E350,2.35,
+                      //     2000,Mercury,Cougar,2.38
+                      //     '''
+                      // );
 
-                    builder.element('Paises', nest: () {
-                      for (var element in country) {
-                        builder.element('País', nest: (){
-                          builder.element('Nome', nest: element.name);
-                          builder.element('Capital', nest: element.capital);
-                          builder.element('Sub_região', nest: element.subRegion);
-                          builder.element('Região', nest: element.region);
-                          builder.element('População', nest: element.population);
-                          builder.element('Área', nest: element.area);
-                          builder.element('Fuso_horário', nest: element.timezone);
-                          builder.element('nome_nativo',
-                              nest: element.nativeName);
-                          builder.element('bandeira', nest: element.flagUrl);
-                        });
-                      }
-                    });
+                  },
+                ),
+                PopupMenuItem(
+                    child: Text('Exportar XML'),
+                  onTap: (){
+                    xmlConverter();
+                  },
+                ),
+              ]
+            )
 
-                    final document = builder.buildDocument();
-                    // print(document.toXmlString());
-                    rwd.writeXML(document.toXmlString(pretty: true, ));
-                    rwd.getFilePath().then((value) => OpenFile.open(value));
-                    // rwd.getFilePath().then((value) {
-                    //   File f = File(value);
-                    //   f.readAsString().then((value) => print(value));
-                    //
-                    // });
-
-                  });
-                })
           ],
         ),
         body: Builder(
@@ -224,5 +217,68 @@ class _MyHomePageState extends State<MyHomePage> {
     }).toList();
 
     context.read<CountryProvider>().updateFloatingCountries(suggestions);
+  }
+
+  void xmlConverter(){
+    context.read<CountryProvider>().fetchToExport().then((value) {
+      List<dynamic> countries =
+          context.read<CountryProvider>().countriesToExport;
+
+      final builder = XmlBuilder();
+      builder.processing('xml', 'version="1.0"');
+
+      builder.element('Paises', nest: () {
+        for (var element in countries) {
+          builder.element('País', nest: (){
+            builder.element('Nome', nest: element.name);
+            builder.element('Capital', nest: element.capital);
+            builder.element('Sub_região', nest: element.subRegion);
+            builder.element('Região', nest: element.region);
+            builder.element('População', nest: element.population);
+            builder.element('Área', nest: element.area);
+            builder.element('Fuso_horário', nest: element.timezone);
+            builder.element('nome_nativo',
+                nest: element.nativeName);
+            builder.element('bandeira', nest: element.flagUrl);
+          });
+        }
+      });
+
+      final document = builder.buildDocument();
+      // print(document.toXmlString());
+      rwd.writeXML(document.toXmlString(pretty: true, ));
+      rwd.getFilePath().then((value) => OpenFile.open(value));
+
+    });
+  }
+
+  void csvConverter(){
+    String csv =
+        "Nome,Capital,Região,SubRegião,População,Área,FusoHorário,NomeNativo,Bandeira\n";
+
+    context.read<CountryProvider>().fetchToExport().then((value) {
+      List<dynamic> countries =
+          context.read<CountryProvider>().countriesToExport;
+      countries.forEach((element) {
+        csv +=
+            '${element.name},'
+            '${element.capital},'
+            '${element.region},'
+            '${element.subRegion},'
+            '${element.population},'
+            '${element.area},'
+            '${element.timezone},'
+            '${element.nativeName},'
+            '${element.flagUrl}\n'
+        ;
+      });
+      rwd.writeCSV(csv);
+      rwd.getFilePath().then((value) {
+        OpenFile.open(value, type: 'text/plain');
+      });
+
+    });
+
+
   }
 }

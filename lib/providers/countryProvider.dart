@@ -11,21 +11,24 @@ class CountryProvider extends ChangeNotifier {
   late List<Country> _countriesToExport = [];
 
   Country get country => _country;
+
   List<Country> get countries => _countries;
+
   List<Country> get floatingCountries => _floatingCountries;
+
   List<Country> get countriesToExport => _countriesToExport;
 
-  void initializeFloatingCountries(){
+  void initializeFloatingCountries() {
     _floatingCountries = _countries;
     notifyListeners();
   }
 
-  void updateFloatingCountries(List<Country> countries){
+  void updateFloatingCountries(List<Country> countries) {
     _floatingCountries = countries;
     notifyListeners();
   }
 
-  Future fetchToExport(){
+  Future fetchToExport() {
     return RestApiServices.instance.byRequiredAttr().then((data) {
       data.forEach((object) {
         _countriesToExport.add(Country.fromJson(object));
@@ -37,26 +40,16 @@ class CountryProvider extends ChangeNotifier {
   Future fetchAllCountries() {
     return RestApiServices.instance.byAll().then((data) {
       data.forEach((object) {
-        // print(object);
-        // print(c.flagUrl);
-        // print(c.flagUrl);
         _countries.add(Country.fromJson(object));
-        // object.forEach((key, value) {
-        //   print('$key: $value');
-        // });
       });
-      // data.forEach((key, value) { print('key: $key value $value');});
-      // print(data);
       notifyListeners();
     });
   }
 
-  Future fetchByName(String countryName){
-    return RestApiServices.instance.byName(countryName).then((data){
+  Future fetchByName(String countryName) {
+    return RestApiServices.instance.byName(countryName).then((data) {
       _country = Country.fromJson(data[0]);
       notifyListeners();
     });
-
   }
-
 }
