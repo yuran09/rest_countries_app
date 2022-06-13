@@ -28,8 +28,6 @@ class ReadWriteData{
     return file.writeAsString(csvString, encoding: utf8);
   }
 
-
-
   Future<File?> readXML() async {
     try {
       // final file = await _localFile;

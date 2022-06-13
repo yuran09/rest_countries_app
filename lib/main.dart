@@ -247,7 +247,7 @@ class _MyHomePageState extends State<MyHomePage> {
       final document = builder.buildDocument();
       // print(document.toXmlString());
       rwd.writeXML(document.toXmlString(pretty: true, ));
-      rwd.getFilePath().then((value) => OpenFile.open(value));
+      rwd.getFilePath().then((value) => OpenFile.open(value, type: 'text/plain'));
 
     });
   }
@@ -274,7 +274,7 @@ class _MyHomePageState extends State<MyHomePage> {
       });
       rwd.writeCSV(csv);
       rwd.getFilePath().then((value) {
-        OpenFile.open(value, type: 'text/plain');
+        OpenFile.open(value, type: 'application/vnd.ms-excel');
       });
 
     });
